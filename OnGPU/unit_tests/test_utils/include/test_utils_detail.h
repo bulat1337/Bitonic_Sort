@@ -21,7 +21,7 @@ template <typename T> std::string get_result(std::string_view file_name)
 
     if (!test_data.is_open())
     {
-        dbgs << "Can't open " << file_name;
+        dbgs << "Can't open " << file_name << '\n';
         throw;
     }
 
@@ -40,7 +40,7 @@ inline std::string get_answer(std::string_view file_name)
 
     if (!answer_file.is_open())
     {
-        dbgs << "Can't open " << file_name;
+        dbgs << "Can't open " << file_name << '\n';
         throw;
     }
 

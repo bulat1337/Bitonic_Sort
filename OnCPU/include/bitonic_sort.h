@@ -1,46 +1,38 @@
 #pragma once
 
-#include <vector>
-#include <algorithm>
 #include <iostream>
 #include <stack>
+#include <iterator>
+#include <utility>
+#include <algorithm>
+#include "utils.h"
 
 namespace bitonic
 {
-	template <typename RandomIt>
-	void Sort(RandomIt begin, RandomIt end)
+
+template <typename C>
+void Merge(C& arr, size_t lhs_id, size_t block_size, bool ascending)
+{
+    for (size_t k = block_size / 2; k > 0; k /= 2)
+		for (size_t i = lhs_id; i + k < lhs_id + block_size; ++i)
+            if ((arr[i] > arr[i + k]) == ascending)
+				std::swap(arr[i], arr[i + k]);
+}
+
+template <typename C>
+void Sort(C& data)
+{
+    size_t data_size = data.size();
+    for (size_t block_size = 2; block_size <= data_size; block_size *= 2)
 	{
-		using range_t = std::pair<RandomIt, RandomIt>;
-		std::stack<range_t> stk;
-		stk.push({begin, end});
-
-		while (!stk.empty())
+        for (size_t lhs_id = 0; lhs_id < data_size; lhs_id += block_size)
 		{
-			auto [cur_begin, cur_end] = stk.top();
-			stk.pop();
+            bool is_ascending = ((lhs_id / block_size) % 2 == 0);
+            Merge(data, lhs_id, block_size, is_ascending);
+        }
 
-			size_t data_size = std::distance(cur_begin, cur_end);
+		utils::hight_dump(data);
+    }
+}
 
-			if (data_size <= 1) continue;
-
-			auto mid = std::next(cur_begin, data_size / 2);
-
-			auto lhs_iter = cur_begin;
-			auto rhs_iter = mid;
-
-			for (;rhs_iter != cur_end; ++lhs_iter, ++rhs_iter)
-			{
-				if (*lhs_iter > *rhs_iter)
-				{
-					std::cout << "swapping " << *lhs_iter << " and " << *rhs_iter << '\n';
-					std::iter_swap(lhs_iter, rhs_iter);
-				}
-			}
-
-			stk.push({cur_begin, mid});
-			stk.push({mid, cur_end});
-		}
-	}
-
-
-};
+}; // bitonic

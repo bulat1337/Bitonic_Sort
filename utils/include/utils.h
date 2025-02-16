@@ -1,8 +1,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <iostream>
 #include <format>
+#include <iostream>
 
 namespace bitonic
 {
@@ -32,17 +32,18 @@ inline int cmp_double(double lhs, double rhs)
     }
 }
 
-template <typename T>
-void hight_dump(const std::vector<T>& data)
+template <typename T> void hight_dump(const std::vector<T> &data)
 {
-	for (const auto& elem : data)
-	{
-		std::cout << std::format("{:{}}", "", elem) << elem << '\n';
-	}
+	std::cout << std::format("{:#^{}}", "", 55) << '\n';
+    for (const auto &elem : data)
+    {
+        std::cout << std::format("{:{}}", "", elem) << elem << '\n';
+    }
+	std::cout << std::format("{:#^{}}", "", 55) << '\n';
 }
 
 }; // namespace utils
 
-}; // namespace matrix
+}; // namespace bitonic
 
 #endif // UTILS_H
