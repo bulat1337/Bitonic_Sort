@@ -31,7 +31,9 @@ void Sort(C& data)
             Merge(data, lhs_id, block_size, is_ascending);
         }
 
+		#ifdef ENABLE_LOGGING
 		utils::hight_dump(data);
+		#endif
     }
 }
 
