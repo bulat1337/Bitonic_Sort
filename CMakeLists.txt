@@ -11,6 +11,9 @@ enable_testing()
 option(ENABLE_LOGGING "Enable logging" OFF)
 set(ENABLE_LOGGING ${ENABLE_LOGGING} CACHE BOOL "Enable logging" FORCE)
 
+option(SORT_ON_CPU "Sort on CPU" OFF)
+set(SORT_ON_CPU ${SORT_ON_CPU} CACHE BOOL "Sort on CPU" FORCE)
+
 option(ENABLE_BD_TESTS "Enables big data tests" OFF)
 set(ENABLE_BD_TESTS ${ENABLE_BD_TESTS} CACHE BOOL "Enables big data tests" FORCE)
 
@@ -97,7 +100,7 @@ add_executable(bitonic_sort.x ./main.cpp)
 target_include_directories(bitonic_sort.x PRIVATE
 	${CMAKE_SOURCE_DIR}/include
 	${CMAKE_SOURCE_DIR}/include/detail
-	${CMAKE_SOURCE_DIR}/../utils/include
+	${CMAKE_SOURCE_DIR}/utils/include
 	${CMAKE_SOURCE_DIR}/RB_Tree/include
 	${OpenCL_INCLUDE_DIRS})
 
@@ -105,6 +108,10 @@ target_link_libraries(bitonic_sort.x PRIVATE ${OpenCL_LIBRARIES})
 
 if(ENABLE_LOGGING)
 	target_compile_definitions(bitonic_sort.x PRIVATE ENABLE_LOGGING)
+endif()
+
+if(SORT_ON_CPU)
+	target_compile_definitions(bitonic_sort.x PRIVATE SORT_ON_CPU)
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

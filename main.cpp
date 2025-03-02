@@ -4,6 +4,8 @@
 #include <vector>
 #include <random>
 #include <ranges>
+#include <algorithm>
+#include <chrono>
 
 int main()
 try
@@ -30,6 +32,19 @@ try
 	#ifdef ENABLE_LOGGING
 	std::cout << "Initial data:\n";
 	bitonic::utils::dump(vec);
+	#endif
+
+	#ifdef SORT_ON_CPU
+	std::vector<int> vec_copy(vec);
+
+	auto start = std::chrono::high_resolution_clock::now();
+	std::sort(vec_copy.begin(), vec_copy.end());
+	auto end = std::chrono::high_resolution_clock::now();
+
+	auto duration = end - start;
+
+	LOG("CPU Duration: {} nanosec\n", duration.count());
+
 	#endif
 
 	bitonic::OclApp app;

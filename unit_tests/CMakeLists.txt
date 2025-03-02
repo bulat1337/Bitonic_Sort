@@ -106,7 +106,7 @@ target_include_directories(unit_tests PRIVATE
 	${CMAKE_SOURCE_DIR}/unit_tests/test_utils/include
 	${CMAKE_SOURCE_DIR}/include
 	${CMAKE_SOURCE_DIR}/include/detail
-	${CMAKE_SOURCE_DIR}/../utils/include
+	${CMAKE_SOURCE_DIR}/utils/include
 	${OpenCL_INCLUDE_DIRS}
 )
 

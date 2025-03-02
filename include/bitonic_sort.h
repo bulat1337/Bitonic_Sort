@@ -227,7 +227,7 @@ class OclApp
 
 		cl::copy(queue_, glob_buf, vec.begin(), vec.end());
 
-  		LOG("Duration: {} nanosec\n", duration);
+  		LOG("GPU Duration: {} nanosec\n", duration);
 
   		vec.resize(old_size);
 	}
