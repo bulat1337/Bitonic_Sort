@@ -4,10 +4,40 @@
 
 #include <gtest/gtest.h> // for Test, TestInfo (ptr only), Message, TEST
 
-// TEST(common, basic_1) { test_utils::run_test<double>("/common/basic_1"); }
+TEST(common, uniform_1000)
+{
+    test_utils::run_test<double>("/common/uniform_1000");
+}
+TEST(common, uniform_1500)
+{
+    test_utils::run_test<double>("/common/uniform_1500");
+}
+TEST(common, uniform_10000)
+{
+    test_utils::run_test<double>("/common/uniform_10000");
+}
+TEST(common, uniform_15000)
+{
+    test_utils::run_test<double>("/common/uniform_15000");
+}
 
 #ifdef ENABLE_BD_TESTS
 
-// TEST(bd_tests, dim_100) { test_utils::run_test<double>("/bd_tests/test_1"); }
+TEST(bd_tests, uniform_100000)
+{
+    test_utils::run_test<double>("/bd_tests/uniform_100000");
+}
+TEST(bd_tests, uniform_500000)
+{
+    test_utils::run_test<double>("/bd_tests/uniform_500000");
+}
+TEST(bd_tests, uniform_1000000)
+{
+    test_utils::run_test<double>("/bd_tests/uniform_1000000");
+}
+TEST(bd_tests, uniform_10000000)
+{
+    test_utils::run_test<double>("/bd_tests/uniform_10000000");
+}
 
 #endif

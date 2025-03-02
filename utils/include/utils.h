@@ -35,43 +35,56 @@ inline int cmp_double(double lhs, double rhs)
 
 template <typename T> void hight_dump(const std::vector<T> &data)
 {
-	std::cout << std::format("{:#^{}}", "", 55) << '\n';
+    std::cout << std::format("{:#^{}}", "", 55) << '\n';
     for (const auto &elem : data)
     {
         std::cout << std::format("{:{}}", "", elem) << elem << '\n';
     }
 
-	std::cout << std::format("{:#^{}}", "", 55) << '\n';
+    std::cout << std::format("{:#^{}}", "", 55) << '\n';
 }
 
 template <typename C>
-void dump(const C& container) {
-    using T = typename C::value_type; // Автоматическое определение типа элемента
-    std::copy(std::begin(container), std::end(container),
-              std::ostream_iterator<T>(std::clog, " "));
-    std::clog << '\n';
+void dump(const C &container, std::ostream &out = std::cout)
+{
+    auto it = std::begin(container);
+    auto end = std::end(container);
+
+    if (it != end)
+    {
+        out << *it;
+        ++it;
+    }
+
+    while (it != end)
+    {
+        out << ' ' << *it;
+        ++it;
+    }
+
+    out << '\n';
 }
 
 bool cinFailed()
 {
-	if (std::cin.eof())
-	{
+    if (std::cin.eof())
+    {
         std::cerr << "EOF reached\n" << std::endl;
     }
-	else if (std::cin.fail())
-	{
+    else if (std::cin.fail())
+    {
         std::cerr << "Invalid input\n" << std::endl;
     }
-	else if (std::cin.bad())
-	{
+    else if (std::cin.bad())
+    {
         std::cerr << "Fatal standart input error\n" << std::endl;
     }
-	else
-	{
-		return false;
-	}
+    else
+    {
+        return false;
+    }
 
-	return true;
+    return true;
 }
 
 }; // namespace utils

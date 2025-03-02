@@ -2,10 +2,12 @@
 #define TEST_UTILS_DETAIL
 
 #include <fstream>
+#include <ranges>
 #include <sstream>
 
 #include "bitonic_sort.h"
 #include "log.h"
+#include "utils.h"
 
 namespace test_utils
 {
@@ -27,7 +29,27 @@ template <typename T> std::string get_result(std::string_view file_name)
 
     std::stringstream result;
 
-    // get result using lib
+    size_t N{};
+
+    test_data >> N;
+
+    std::vector<int> vec;
+    vec.reserve(N);
+
+    for ([[maybe_unused]] auto _ : std::views::iota(size_t(0), N))
+    {
+        int elem{};
+
+        test_data >> elem;
+
+        vec.push_back(elem);
+    }
+
+    bitonic::OclApp app;
+
+    app.bsort(vec, /* incr_order = */ true);
+
+    bitonic::utils::dump(vec, result);
 
     return result.str();
 }

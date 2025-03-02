@@ -11,6 +11,9 @@ enable_testing()
 option(ENABLE_LOGGING "Enable logging" OFF)
 set(ENABLE_LOGGING ${ENABLE_LOGGING} CACHE BOOL "Enable logging" FORCE)
 
+option(PRINT_DURATION "Enable logging" OFF)
+set(PRINT_DURATION ${PRINT_DURATION} CACHE BOOL "Print duration" FORCE)
+
 option(SORT_ON_CPU "Sort on CPU" OFF)
 set(SORT_ON_CPU ${SORT_ON_CPU} CACHE BOOL "Sort on CPU" FORCE)
 
@@ -112,6 +115,10 @@ endif()
 
 if(SORT_ON_CPU)
 	target_compile_definitions(bitonic_sort.x PRIVATE SORT_ON_CPU)
+endif()
+
+if(PRINT_DURATION)
+	target_compile_definitions(bitonic_sort.x PRIVATE PRINT_DURATION)
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
