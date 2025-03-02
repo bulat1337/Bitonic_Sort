@@ -3,21 +3,44 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#include <ranges>
 
 int main()
 try
 {
+	size_t N{};
+
+	std::cin >> N;
+
+	if (bitonic::utils::cinFailed()) return 1;
+
+	std::vector<int> vec;
+	vec.reserve(N);
+
+	for ([[maybe_unused]]auto _ : std::views::iota(size_t(0), N))
+	{
+		int elem{};
+
+		std::cin >> elem;
+		if (bitonic::utils::cinFailed()) return 1;
+
+		vec.push_back(elem);
+	}
+
+	#ifdef ENABLE_LOGGING
+	std::cout << "Initial data:\n";
+	bitonic::utils::dump(vec);
+	#endif
+
 	bitonic::OclApp app;
 
-	std::vector<int> vec{4, 2, 7, 8, 1, 4, 6, 7, 43, 14, 32, 5, 75, 23, 6, 76};
+	app.bsort(vec, /* incr_order = */ true);
 
-	std::cout << "INTITIAL:\n";
+	MSG("Sorted data:\n");
+
 	bitonic::utils::dump(vec);
 
-	app.bsort(vec, true);
-
-	std::cout << "SORTED:\n";
-	bitonic::utils::dump(vec);
+	return 0;
 }
 catch (cl::Error &err)
 {

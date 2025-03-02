@@ -89,9 +89,9 @@ class OclApp
 		throw std::runtime_error("No suiting devises found.\n");
 	}
 
-	void roundUpVec(std::vector<int>& vec, bool is_increasing)
+	void roundUpVec(std::vector<int>& vec, bool incr_order)
 	{
-		int filler = 	is_increasing ?
+		int filler = 	incr_order ?
 						std::numeric_limits<int>::max() :
 						std::numeric_limits<int>::min();
 
@@ -136,16 +136,16 @@ class OclApp
 		local_bsort = cl::Kernel(prog, "local_bsort");
 	}
 
-	void count_time(std::vector<cl::Event> &events, cl_ulong *time)
+	void count_time(std::vector<cl::Event> &events, cl_ulong *duration)
 	{
 		for (auto &&evnt : events)
 		{
 			const auto start = evnt.getProfilingInfo<CL_PROFILING_COMMAND_START>();
 			const auto end = evnt.getProfilingInfo<CL_PROFILING_COMMAND_END>();
 
-			const auto microsecs = (end - start) / 1000;
+			const auto evnt_duration = end - start;
 
-			*time += microsecs;
+			*duration += evnt_duration;
 		}
 	}
 
@@ -162,11 +162,11 @@ class OclApp
 		load_kernels("../kernels/bitonic_sort.cl");
     }
 
-    void bsort(std::vector<int>& vec, bool is_increasing)
+    void bsort(std::vector<int>& vec, bool incr_order)
 	{
 		size_t old_size = vec.size();
 
-		roundUpVec(vec, is_increasing);
+		roundUpVec(vec, incr_order);
 
 		size_t glob_size = vec.size() / 2;
 
@@ -191,19 +191,19 @@ class OclApp
 
 		cl::LocalSpaceArg loc_buf = cl::Local(2 * loc_size * sizeof(int));
 
-		cl_ulong gpu_time = 0;
+		cl_ulong duration = 0;
 		std::vector<cl::Event> events;
 
 		local_bsort.setArg(0, glob_buf);
 		local_bsort.setArg(1, cur_stage);
 		local_bsort.setArg(2, loc_buf);
-		local_bsort.setArg(3, static_cast<unsigned>(is_increasing));
+		local_bsort.setArg(3, static_cast<unsigned>(incr_order));
 
 		execute_kernel(local_bsort, glob_size, loc_size, events);
 
 		events[0].wait();
 
-		count_time(events, &gpu_time);
+		count_time(events, &duration);
 
 		events.clear();
 
@@ -214,7 +214,7 @@ class OclApp
 				global_bmerge_.setArg(0, glob_buf);
 				global_bmerge_.setArg(1, cur_stage);
 				global_bmerge_.setArg(2, passed_stage);
-				global_bmerge_.setArg(3, static_cast<unsigned>(is_increasing));
+				global_bmerge_.setArg(3, static_cast<unsigned>(incr_order));
 
 				execute_kernel(global_bmerge_, glob_size, loc_size, events);
 			}
@@ -223,11 +223,11 @@ class OclApp
 		for (auto &&evnt : events)
 			evnt.wait();
 
-		count_time(events, &gpu_time);
+		count_time(events, &duration);
 
 		cl::copy(queue_, glob_buf, vec.begin(), vec.end());
 
-  		std::cout << "bsort gpu_time: " << gpu_time << " microsecs\n";
+  		LOG("Duration: {} nanosec\n", duration);
 
   		vec.resize(old_size);
 	}

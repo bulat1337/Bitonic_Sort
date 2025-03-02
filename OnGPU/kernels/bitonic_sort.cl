@@ -1,4 +1,4 @@
-__kernel void global_bmerge(__global int * vec, uint cur_stage, uint passed_stage, uint is_incr)
+__kernel void global_bmerge(__global int * vec, uint cur_stage, uint passed_stage, uint incr_order)
 {
     uint glob_id = get_global_id(0);
     uint distance = 1 << (cur_stage - passed_stage);
@@ -6,19 +6,20 @@ __kernel void global_bmerge(__global int * vec, uint cur_stage, uint passed_stag
     uint left_id = (glob_id % distance) + (glob_id / distance) * 2 * distance;
     uint right_id = left_id + distance;
 
-    if (( glob_id / (1 << cur_stage)) % 2 == 1 )
-        is_incr = 1 - is_incr;
-
     int greater = (vec[left_id] > vec[right_id]) ? vec[left_id] : vec[right_id];
     int less = (vec[left_id] > vec[right_id]) ? vec[right_id] : vec[left_id];
 
-    vec[left_id] = is_incr ? less : greater;
-    vec[right_id] = is_incr ? greater : less;
+    if (( glob_id / (1 << cur_stage)) % 2 == 1 )
+        incr_order = 1 - incr_order;
+
+    vec[left_id] = incr_order ? less : greater;
+    vec[right_id] = incr_order ? greater : less;
 }
 
-__kernel void local_bsort(__global int* vec, uint cur_stage, __local int* local_data, uint is_incr)
+__kernel void local_bsort(__global int* vec, uint cur_stage, __local int* local_data, uint incr_order)
 {
     uint local_id  = get_local_id(0);
+	uint cur_incr_order = incr_order;
     uint group_size = get_local_size(0);
     uint gr_offset  = get_group_id(0) * group_size;
 
@@ -40,13 +41,15 @@ __kernel void local_bsort(__global int* vec, uint cur_stage, __local int* local_
             int right_elem = local_data[right_id];
 
             if((local_id / (1 << pair)) % 2 == 1)
-                is_incr = 1 - is_incr;
+                cur_incr_order = 1 - cur_incr_order;
 
             int greater = (left_elem > right_elem) ? left_elem : right_elem;
             int less = (left_elem > right_elem) ? right_elem : left_elem;
 
-            local_data[left_id] = is_incr ? less : greater;
-            local_data[right_id] = is_incr ? greater : less;
+            local_data[left_id] = cur_incr_order ? less : greater;
+            local_data[right_id] = cur_incr_order ? greater : less;
+
+			cur_incr_order = incr_order;
 
             barrier(CLK_LOCAL_MEM_FENCE);
         }

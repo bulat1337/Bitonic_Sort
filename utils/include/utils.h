@@ -52,6 +52,28 @@ void dump(const C& container) {
     std::clog << '\n';
 }
 
+bool cinFailed()
+{
+	if (std::cin.eof())
+	{
+        std::cerr << "EOF reached\n" << std::endl;
+    }
+	else if (std::cin.fail())
+	{
+        std::cerr << "Invalid input\n" << std::endl;
+    }
+	else if (std::cin.bad())
+	{
+        std::cerr << "Fatal standart input error\n" << std::endl;
+    }
+	else
+	{
+		return false;
+	}
+
+	return true;
+}
+
 }; // namespace utils
 
 }; // namespace bitonic
