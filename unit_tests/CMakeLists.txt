@@ -85,16 +85,18 @@ add_executable(unit_tests
 	main.cpp
 )
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-	target_compile_definitions(unit_tests PRIVATE DEBUG)
-	target_compile_options(unit_tests PRIVATE ${DEBUG_COMPILE_OPTIONS})
+target_compile_options(unit_tests PRIVATE
+    $<$<CONFIG:Debug>:${DEBUG_COMPILE_OPTIONS}>
+    $<$<CONFIG:Release>:${RELEASE_COMPILE_OPTIONS}>
+)
 
-	target_link_options(unit_tests PRIVATE
-		-fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,nonnull-attribute,null,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr
-	)
-else()
-	target_compile_options(unit_tests PRIVATE ${RELEASE_COMPILE_OPTIONS})
-endif()
+target_compile_definitions(unit_tests PRIVATE
+    $<$<CONFIG:Debug>:DEBUG>
+)
+
+target_link_options(unit_tests PRIVATE
+    $<$<CONFIG:Debug>:-fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,nonnull-attribute,null,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr>
+)
 
 target_link_libraries(unit_tests
 	GTest::GTest

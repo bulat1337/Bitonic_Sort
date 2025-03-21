@@ -139,13 +139,15 @@ if(PRINT_DURATION)
 	target_compile_definitions(bitonic_sort.x PRIVATE PRINT_DURATION)
 endif()
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-	target_compile_definitions(bitonic_sort.x PRIVATE DEBUG)
-	target_compile_options(bitonic_sort.x PRIVATE ${DEBUG_COMPILE_OPTIONS})
+target_compile_options(bitonic_sort.x PRIVATE
+    $<$<CONFIG:Debug>:${DEBUG_COMPILE_OPTIONS}>
+    $<$<CONFIG:Release>:${RELEASE_COMPILE_OPTIONS}>
+)
 
-	target_link_options(bitonic_sort.x PRIVATE
-		-fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,nonnull-attribute,null,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr
-	)
-else()
-	target_compile_options(bitonic_sort.x PRIVATE ${RELEASE_COMPILE_OPTIONS})
-endif()
+target_compile_definitions(bitonic_sort.x PRIVATE
+    $<$<CONFIG:Debug>:DEBUG>
+)
+
+target_link_options(bitonic_sort.x PRIVATE
+    $<$<CONFIG:Debug>:-fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,nonnull-attribute,null,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr>
+)
